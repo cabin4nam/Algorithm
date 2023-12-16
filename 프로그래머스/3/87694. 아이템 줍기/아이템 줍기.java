@@ -1,60 +1,49 @@
 import java.util.*;
+
 class Solution {
-  
-    static char map[][]=new char[101][101];
-    public int solution(int[][] rectangle, int X, int Y, int itemX, int itemY) {
-        for(int i=0;i<rectangle.length;i++){
-            int y1=rectangle[i][1];
-            int x1=rectangle[i][0];
-            int y2=rectangle[i][3];
-            int x2=rectangle[i][2];  
-            draw(y1*2,x1*2,y2*2,x2*2);
-        }
-        
-        return bfs(Y*2,X*2,itemY*2,itemX*2);
-        
-        
+    static String[][] shape;
+    static int startX, startY, targetX, targetY, answer, total;
     
-    }
-    public static int bfs(int Y,int X,int findY,int findX){
-        int yy[]={-1,1,0,0};
-        int xx[]={0,0,-1,1};
-        Queue<Integer[]> queue=new LinkedList<>();
-        queue.add(new Integer[]{Y,X,0});
-        boolean visited[][]=new boolean[101][101];
-        while(!queue.isEmpty()){
-            Integer temp[]=queue.poll();
-            int prevY=temp[0];
-            int prevX=temp[1];
-            int count=temp[2];
-            if(prevY==findY&&prevX==findX)
-                return count/2;
-            for(int i=0;i<4;i++){
-                int nextY=prevY+yy[i];
-                int nextX=prevX+xx[i];
-                if(nextY<0||nextX<0||nextY>=map.length||nextX>=map[0].length)
-                    continue;
-                if(visited[nextY][nextX]==true||map[nextY][nextX]!='2')
-                    continue;
-                
-                visited[nextY][nextX]=true;
-                queue.add(new Integer[]{nextY,nextX,count+1});
-              
+    public int solution(int[][] rectangle, int characterX, int characterY, int itemX, int itemY) {
+        // 전역변수로 저장해주기
+        shape = new String[52][52];
+        startX = characterX; startY = characterY; targetX = itemX; targetY = itemY; 
+        answer = total = 0;
+        
+        // 전체 shape를 ""로 초기화
+        for(int i=0; i<52; i++) Arrays.fill(shape[i],""); // ""로 초기화
+
+        // 각 사각형을 돌면서 각 좌표의 성질을 저장해줌
+        for(int[] xy : rectangle){
+            int leftX = xy[0], rightX = xy[2], leftY = xy[1], rightY = xy[3];
+
+            // 꼭지점 (왼쪽아래(LDX), 오른쪽아래(RDX), 왼쪽위(LUX), 오른쪽위(RUX))
+            shape[leftX][leftY] = "LDX"; shape[rightX][leftY] = "RDX"; shape[leftX][rightY] = "LUX"; shape[rightX][rightY] = "RUX";
+
+            // 각 변을 저장해줌 (윗변, 아랫변, 왼쪽변, 오른쪽변)
+            for(int x=leftX+1; x<rightX; x++){// 상(U), 하(D)
+                shape[x][rightY] += "U"; shape[x][leftY] += "D";
+            }
+
+            for(int y=leftY+1; y<rightY; y++){// 좌(L), 우(R)
+                shape[leftX][y] += "L"; shape[rightX][y] += "R";
             }
         }
-        
-        return 0;
+
+        followLine(characterX, characterY);
+
+        return Math.min(answer, total-answer);
     }
-    public static void draw(int y1,int x1,int y2,int x2){
-        
-        for(int i=y1;i<=y2;i++){
-            for(int j=x1;j<=x2;j++){
-            	if(map[i][j]=='1') continue;
-                map[i][j]='1';
-                if(i==y1||i==y2||j==x1||j==x2)
-                    map[i][j]='2';
-            }
-        }
-        
+
+    public void followLine(int x, int y){
+        String location = shape[x][y];
+        if(location.equals("RU") || location.equals("UR") || location.equals("LUX") || location.equals("U"))  x++;
+        if(location.equals("LD") || location.equals("DL") || location.equals("RDX") || location.equals("D"))  x--;
+        if(location.equals("LU") || location.equals("UL") || location.equals("LDX") || location.equals("L"))  y++;
+        if(location.equals("RD") || location.equals("DR") || location.equals("RUX") || location.equals("R"))  y--;
+        total++;
+        if(x == targetX && y == targetY)    answer = total;
+        if(x == startX && y == startY)      return;
+        followLine(x, y);
     }
 }
