@@ -12,7 +12,8 @@ public class Main {
             this.c = c;
         }
     }
-
+    private static int moveRow[] = {1,-1,0,0};
+    private static int moveCol[] = {0,0,1,-1};
     static boolean[][] visited;
     static int[][] map;
     static ArrayList<Integer> answers;
@@ -65,37 +66,49 @@ public class Main {
             Point preHome = homeQueue.poll();
             count++;
 
-            // 위쪽 집 검사
-            if(preHome.r > 0){
-                if(map[preHome.r-1][preHome.c]==1 && !visited[preHome.r-1][preHome.c]){
-                    homeQueue.add(new Point(preHome.r-1, preHome.c));
-                    visited[preHome.r-1][preHome.c] = true;
+            for(int i=0; i<4; i++){
+                int nextRow = preHome.r + moveRow[i];
+                int nextCol = preHome.c + moveCol[i];
+
+                if(nextRow >= 0 && nextCol >= 0 && nextRow < map.length && nextCol < map.length){
+                    if(map[nextRow][nextCol] == 1 && !visited[nextRow][nextCol]){
+                        homeQueue.add(new Point(nextRow, nextCol));
+                        visited[nextRow][nextCol] = true;
+                    }
                 }
             }
 
-            // 아래쪽 집 검사
-            if(preHome.r < map.length-1){
-                if(map[preHome.r+1][preHome.c]==1 && !visited[preHome.r+1][preHome.c]){
-                    homeQueue.add(new Point(preHome.r+1, preHome.c));
-                    visited[preHome.r+1][preHome.c] = true;
-                }
-            }
-
-            // 왼쪽 집 검사
-            if(preHome.c > 0){
-                if(map[preHome.r][preHome.c-1]==1 && !visited[preHome.r][preHome.c-1]){
-                    homeQueue.add(new Point(preHome.r, preHome.c-1));
-                    visited[preHome.r][preHome.c-1] = true;
-                }
-            }
-
-            // 오른쪽 집 검사
-            if(preHome.c < map.length-1){
-                if(map[preHome.r][preHome.c+1]==1 && !visited[preHome.r][preHome.c+1]){
-                    homeQueue.add(new Point(preHome.r, preHome.c+1));
-                    visited[preHome.r][preHome.c+1] = true;
-                }
-            }
+//            // 위쪽 집 검사
+//            if(preHome.r > 0){
+//                if(map[preHome.r-1][preHome.c]==1 && !visited[preHome.r-1][preHome.c]){
+//                    homeQueue.add(new Point(preHome.r-1, preHome.c));
+//                    visited[preHome.r-1][preHome.c] = true;
+//                }
+//            }
+//
+//            // 아래쪽 집 검사
+//            if(preHome.r < map.length-1){
+//                if(map[preHome.r+1][preHome.c]==1 && !visited[preHome.r+1][preHome.c]){
+//                    homeQueue.add(new Point(preHome.r+1, preHome.c));
+//                    visited[preHome.r+1][preHome.c] = true;
+//                }
+//            }
+//
+//            // 왼쪽 집 검사
+//            if(preHome.c > 0){
+//                if(map[preHome.r][preHome.c-1]==1 && !visited[preHome.r][preHome.c-1]){
+//                    homeQueue.add(new Point(preHome.r, preHome.c-1));
+//                    visited[preHome.r][preHome.c-1] = true;
+//                }
+//            }
+//
+//            // 오른쪽 집 검사
+//            if(preHome.c < map.length-1){
+//                if(map[preHome.r][preHome.c+1]==1 && !visited[preHome.r][preHome.c+1]){
+//                    homeQueue.add(new Point(preHome.r, preHome.c+1));
+//                    visited[preHome.r][preHome.c+1] = true;
+//                }
+//            }
         }
 
         return count;
