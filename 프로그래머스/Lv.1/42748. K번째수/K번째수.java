@@ -1,15 +1,25 @@
 import java.util.*;
 class Solution {
-	public int[] solution(int[] array, int[][] commands) {
-		int[] answer = new int[commands.length];
-
-		for (int i = 0; i < commands.length; i++) {
-			int[] temp = Arrays.copyOfRange(array, commands[i][0] - 1, commands[i][1]); 
-            					   // 원본 배열, 복사할 시작인덱스, 복사할 끝인덱스
-
-			Arrays.sort(temp); // 배열 오름차순 정렬
-			answer[i] = temp[commands[i][2] - 1];
-		}
-		return answer;
-	}
+    public ArrayList<Integer> solution(int[] array, int[][] commands) {
+        int size = array.length;
+        ArrayList<Integer> answer = new ArrayList<>();
+        
+        // commands 하나 당 작업 한번
+        for(int c = 0; c<commands.length; c++){
+            int i = commands[c][0];
+            int j = commands[c][1];
+            int k = commands[c][2];
+            
+            // 배열 추출
+            int[] newArr = Arrays.copyOfRange(array, i-1 ,j);
+            
+            // 배열 정렬
+            Arrays.sort(newArr);
+            
+            // k번째 값 저장
+            answer.add(newArr[k-1]);
+        }
+        
+        return answer;
+    }
 }
