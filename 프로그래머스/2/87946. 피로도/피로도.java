@@ -4,18 +4,33 @@ class Solution {
     public int solution(int k, int[][] dungeons) {
         visited = new boolean[dungeons.length];
         
-        dfs(0, k, dungeons);
+        for(int i=0; i<dungeons.length; i++){
+            visited[i] = true;
+            adventure(k-dungeons[i][1], dungeons, 1);
+            visited[i] = false;
+        }
+        
         return answer;
     }
     
-    public void dfs(int depth, int fatigue, int[][] dungeons){
+    private void adventure(int px, int[][] dungeons, int count){
+        boolean canGo = false;
+        
         for(int i=0; i<dungeons.length; i++){
-            if(visited[i] || fatigue < dungeons[i][0]) continue;
+            if(visited[i]) continue;
             
-            visited[i] = true;
-            dfs(depth + 1, fatigue-dungeons[i][1], dungeons);
-            visited[i] = false;
+            if(px >= dungeons[i][0]){
+                canGo = true;
+                visited[i] = true;
+                adventure(px-dungeons[i][1], dungeons, count+1);
+                visited[i] = false;
+            } 
         }
-        answer = Math.max(answer, depth);
+        
+        if(!canGo){
+            if(answer < count) answer = count;
+            return;
+        } 
+        
     }
 }
