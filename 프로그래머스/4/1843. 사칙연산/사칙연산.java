@@ -63,6 +63,8 @@ class Solution {
     
     // k 기준으로 나눈 두 파트 -> 앞쪽 : front, 뒤쪽 : back
     public void setValue(int a, int b, int x, int y, boolean value){
+        // value == true : 숫자가 하나인 경우
+        
         // front가 숫자 하나 이고, 그 숫자가 - 값 일때
         // - 값인 한 숫자 -> 괄호를 통해 결과를 좌우할 수 있음
         // a-b의 경우 : -를 밖으로 빼고, 그 뒤를 괄호로 묶으면 더 작은 음수값을 얻을 수도 있음
