@@ -1,44 +1,41 @@
-import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Scanner;
+import java.util.List;
+import java.util.Stack;
+import java.util.StringTokenizer;
 
 public class Main {
-    public static void main(String[] args) throws IOException {
-        Scanner sc = new Scanner(System.in);
-        int N = sc.nextInt();
-        int K = sc.nextInt();
+    public static void main(String[] args) throws Exception {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
 
-        ArrayList<Integer> answerArr = new ArrayList<>();
-        Queue<Integer> queue = new LinkedList<>();
-        for(int i=1; i<=N; i++){
-            queue.add(i);
+        List<Integer> answer = new ArrayList<>();
+
+        int N = Integer.parseInt(st.nextToken());
+        int K = Integer.parseInt(st.nextToken());
+
+        List<Integer> nums = new ArrayList<>();
+        for(int i=1; i<=N; i++) nums.add(i-1, i);
+
+        int removeIdx = 0;
+        while(nums.size() > 0){
+            removeIdx = (removeIdx+(K-1))%(nums.size());
+
+            int n = nums.remove(removeIdx);
+
+            answer.add(n);
         }
 
-        int count=0;
-        while(!queue.isEmpty()){
-            int item = queue.poll();
-            count++;
-
-            if(count == K){
-                count = 0;
-                answerArr.add(item);
-                continue;
+        System.out.print("<");
+        for(int i=0; i<answer.size(); i++){
+            if(i==answer.size()-1){
+                System.out.print(answer.get(i));
             }
-
-            queue.add(item);
+            else {
+                System.out.print(answer.get(i) + ", ");
+            }
         }
-
-        StringBuilder st = new StringBuilder();
-        st.append("<");
-
-        for(int i=0; i<answerArr.size(); i++){
-            st.append(answerArr.get(i));
-            if(i != answerArr.size()-1) st.append(", ");
-        }
-        st.append(">");
-        System.out.println(st);
-
+        System.out.print(">");
     }
 }
