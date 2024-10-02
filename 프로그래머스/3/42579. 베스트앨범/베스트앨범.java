@@ -1,45 +1,63 @@
 import java.util.*;
-import java.util.stream.*;
-
 class Solution {
-    class Song{
-        int idx;
+    private static class Song{
+        int id;
         int play;
         
-        public Song(int idx, int play){
-            this.idx = idx;
+        public Song(int id, int play){
+            this.id = id;
             this.play = play;
         }
     }
-
-    public ArrayList<Integer> solution(String[] genres, int[] plays) {
-        ArrayList<Integer> answer = new ArrayList<>();
+    
+    public List<Integer> solution(String[] genres, int[] plays) {
+        List<Integer> answer = new ArrayList<>();
         
-        HashMap<String, ArrayList<Song>> bestSongs = new HashMap<>();
-        HashMap<String, Integer> sumOfPlay = new HashMap<>();
+        Map<String, Integer> genreCount = new HashMap<>(); // 장르별 총 재생 횟수
+        Map<String, List<Song>> songCount = new HashMap<>(); // 장르 별 곡의 재생
         
-        for(int i=0; i<genres.length; i++){
-            if(!bestSongs.containsKey(genres[i])) bestSongs.put(genres[i], new ArrayList<>());
-            bestSongs.get(genres[i]).add(new Song(i, plays[i]));
-            sumOfPlay.put(genres[i], sumOfPlay.getOrDefault(genres[i], 0) + plays[i]);
+        for(int i=0; i<plays.length; i++){
+            String genre = genres[i];
+            genreCount.put(genre, genreCount.getOrDefault(genre, 0) + plays[i]);
+            
+            if(!songCount.containsKey(genre)) songCount.put(genre, new ArrayList<>());
+            songCount.get(genre).add(new Song(i, plays[i]));
         }
         
-        // 장르 별 재생 횟수 기준 내림차순 정렬
-        Stream<Map.Entry<String, Integer>> sortedGenre = sumOfPlay.entrySet().stream()
-            .sorted((g1, g2) -> Integer.compare(g2.getValue(), g1.getValue()));
-        
-        // 장르 내 곡들의 재생 횟수 내림차순 정렬
-        sortedGenre.forEach(entry -> {
-            List<Song> sortedSongs = bestSongs.get(entry.getKey()).stream()
-                .sorted((s1, s2) -> Integer.compare(s2.play, s1.play))
-                .collect(Collectors.toList());
-            
-            for(int i=0; i<sortedSongs.size(); i++){
-                if(i==2) break;
-                
-                answer.add(sortedSongs.get(i).idx);
+        // 정렬
+        List<String> genreKeySet = new ArrayList<>(genreCount.keySet());
+        Collections.sort(genreKeySet, new Comparator<String>(){
+            @Override
+            public int compare(String s1, String s2){
+                return genreCount.get(s2) - genreCount.get(s1);
             }
         });
+        
+        for(String key : genreKeySet){
+            List<Song> songs = songCount.get(key);
+            
+            Collections.sort(songs, new Comparator<Song>(){
+               @Override
+                public int compare(Song s1, Song s2){
+                    if(s1.play < s2.play) return 1;
+                    else if(s1.play > s2.play) return -1;
+                    else {
+                        return s1.id - s2.id;
+                    }
+                }
+            });
+        }
+        
+        for(String key : genreKeySet){
+            List<Song> songs = songCount.get(key);
+            
+            for(int i=0; i<songs.size(); i++){
+                if(i>1) break;
+                answer.add(songs.get(i).id);
+            }
+        }
+        
+        
         
         return answer;
     }
