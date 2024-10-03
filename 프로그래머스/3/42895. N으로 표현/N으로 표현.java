@@ -17,6 +17,7 @@ class Solution {
         
         if(number == N) return 1; // 1개로 만들 수 있는 값이라면 바로 반환
         
+        // 내가 항상 틀렸던 부분 : 괄호가 있는 경우 ex. (5,26) -> 4 ((5/5) + (5*5))
         for(int i=2; i<9; i++){
             for(int j=1; j<=i/2; j++){
                 unionSet(setList.get(i), setList.get(i-j), setList.get(j));
