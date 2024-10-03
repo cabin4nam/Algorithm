@@ -1,59 +1,43 @@
 import java.util.*;
 class Solution {
-    static int[] count;
-    static int min = 0;
-    static boolean[] visited;
+    public static class Word{
+        String word;
+        int depth;
+        
+        public Word(String word, int depth){
+            this.word = word;
+            this.depth = depth;
+        }
+    }
     public int solution(String begin, String target, String[] words) {
         int answer = 0;
         
-        count = new int[words.length];
-        visited = new boolean[words.length];
+        // target이 words에 없으면 0반환
+        if(!Arrays.asList(words).contains(target)) return answer;
         
-        bfs(begin, target, words);
-        
-        return min;
-    }
-    
-    static void bfs(String begin, String target, String[] words){
-         Queue<Integer> q = new LinkedList<>();
-        
-        for(int i=0; i<words.length; i++){
-            int diffCnt = 0;
-
-            for(int j = 0; j<words[i].length(); j++){
-                if(!words[i].substring(j,j+1).equals(begin.substring(j,j+1))) diffCnt ++;
-            }
-
-            if(diffCnt == 1 && !visited[i]) {
-                q.add(i);
-                visited[i] = true;
-                count[i] = 1;
-            }
-        }
-       
+        Queue<Word> q = new LinkedList<>();
+        q.offer(new Word(begin, 0));
         
         while(!q.isEmpty()){
-            int currentIndex = q.poll();
-              
-            if(words[currentIndex].equals(target)){
-                min = count[currentIndex];
-                return;
+            Word w = q.poll();
+            
+            if(w.word.equals(target)){
+                return w.depth;
             }
-
-            for(int i=0; i<words.length; i++){
+            
+            // begin의 각 자리의 글자를 바꾸는 경우
+            for(String str : words){
                 int diffCnt = 0;
-
-                for(int j = 0; j<words[i].length(); j++){
-                    if(!words[i].substring(j,j+1).equals(words[currentIndex].substring(j,j+1))) diffCnt ++;
+                for(int i=0; i<w.word.length(); i++){
+                    if(str.charAt(i) != w.word.charAt(i)) diffCnt ++;
                 }
-
-                if(diffCnt == 1 && !visited[i]) {
-                    q.add(i);
-                    visited[i] = true;
-                    count[i] = count[currentIndex]+1;
+                
+                if(diffCnt == 1){
+                    q.offer(new Word(str, w.depth+1));
                 }
             }
         }
         
+        return 0;
     }
 }
