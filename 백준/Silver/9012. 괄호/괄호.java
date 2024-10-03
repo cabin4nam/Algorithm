@@ -17,15 +17,18 @@ public class Main {
             for(int i=0; i<com.length(); i++){
                 char s = com.charAt(i);
 
+                // 여는 괄호는 스택에 무조건 저장
                 if(s=='(') stack.push(s);
                 else{
+                    // 닫는 괄호는 열린 괄호 짝이 있을 때에만 정상
                     if(stack.isEmpty() || stack.pop()!='('){
                         answer = "NO";
                         break;
                     }
                 }
             }
-
+            
+            // 모든 과정을 끝내고, 열린 괄호가 스택에 남아있다면 NO
             if(!stack.isEmpty()) answer = "NO";
 
             System.out.println(answer);
