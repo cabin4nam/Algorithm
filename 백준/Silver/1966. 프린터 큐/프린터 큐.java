@@ -24,7 +24,7 @@ public class Main {
             int K = Integer.parseInt(st.nextToken());
 
             st = new StringTokenizer(br.readLine());
-            LinkedList<Doc> docs = new LinkedList<>();
+            Queue<Doc> docs = new LinkedList<>();
             for(int i=0; i<N; i++){
                 int lv = Integer.parseInt(st.nextToken());
                 docs.add(new Doc(i, lv));
@@ -35,9 +35,10 @@ public class Main {
                 Doc doc = docs.poll();
 
                 boolean isMax = true;
-                for(int i=0; i<docs.size(); i++){
-                    if(docs.get(i).level > doc.level){
+                for(Doc d : docs){
+                    if(d.level > doc.level){
                         isMax = false;
+                        break;
                     }
                 }
 
