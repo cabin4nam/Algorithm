@@ -3,115 +3,61 @@ import java.io.InputStreamReader;
 import java.util.*;
 
 public class Main {
-    static class Point{
-        int r;
-        int c;
-
-        public Point(int r, int c){
-            this.r = r;
-            this.c = c;
-        }
-    }
-    private static int moveRow[] = {1,-1,0,0};
-    private static int moveCol[] = {0,0,1,-1};
-    static boolean[][] visited;
-    static int[][] map;
-    static ArrayList<Integer> answers;
-
-    public static void main(String[] args) throws Exception{
+    private static int[][] map;
+    private static boolean[][] visited;
+    private static int N;
+    private static int[][] move = {{-1,0}, {1,0}, {0,-1}, {0,1}};
+    private static int count = 0;
+    public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
 
-        int n = Integer.parseInt(st.nextToken());
+        N = Integer.parseInt(st.nextToken());
 
-        visited = new boolean[n][n];
-        map = new int[n][n];
-        answers = new ArrayList<>();
-
-        Queue<Point> hasHome = new LinkedList<>();
-        for(int i=0; i<n; i++){
-            st = new StringTokenizer(br.readLine());
-            String str = st.nextToken();
-            for(int j=0; j<n; j++){
-                map[i][j] = Integer.parseInt(str.substring(j, j+1));
-                if(map[i][j]==1) hasHome.add(new Point(i,j));
+        // map 초기화
+        map = new int[N][N];
+        for(int i=0; i<N; i++){
+            String s = br.readLine();
+            for(int j=0; j<N; j++){
+                map[i][j] = Integer.parseInt(s.substring(j, j+1));
             }
         }
 
-        while(!hasHome.isEmpty()){
-            Point start = hasHome.poll();
-
-            if(visited[start.r][start.c]) continue;
-
-            int count = BFS(start);
-            answers.add(count);
+        // 방문하지 않은 단지에서 시작해 dfs 탐색
+        ArrayList<Integer> answer = new ArrayList<>();
+        visited = new boolean[N][N];
+        for(int i=0; i<N; i++){
+            for(int j=0; j<N; j++){
+                if(map[i][j] == 1 && !visited[i][j]){
+                    count = 0;
+                    dfs(i, j);
+                    answer.add(count);
+                }
+            }
         }
 
-        Collections.sort(answers);
-
-        System.out.println(answers.size());
-        for(int a : answers)
-            System.out.println(a);
+        Collections.sort(answer);
+        System.out.println(answer.size());
+        for(int a : answer) System.out.println(a);
 
     }
 
-    private static int BFS(Point p){
-        Queue<Point> homeQueue = new LinkedList<>();
-        int count = 0;
+    private static void dfs(int r, int c) {
+        count ++;
+        visited[r][c] = true;
 
-        homeQueue.add(p);
-        visited[p.r][p.c] = true;
-        
-        while(!homeQueue.isEmpty()){
-            Point preHome = homeQueue.poll();
-            count++;
+        // 상하좌우로 이동
+        for(int i=0; i<4; i++){
+            int nextR = r+move[i][0];
+            int nextC = c+move[i][1];
 
-            for(int i=0; i<4; i++){
-                int nextRow = preHome.r + moveRow[i];
-                int nextCol = preHome.c + moveCol[i];
+            if(nextR < 0 || nextC < 0 || nextR >= N || nextC >= N) continue;
+            if(visited[nextR][nextC]) continue;
 
-                if(nextRow >= 0 && nextCol >= 0 && nextRow < map.length && nextCol < map.length){
-                    if(map[nextRow][nextCol] == 1 && !visited[nextRow][nextCol]){
-                        homeQueue.add(new Point(nextRow, nextCol));
-                        visited[nextRow][nextCol] = true;
-                    }
-                }
+            if(map[nextR][nextC] == 1){
+                dfs(nextR, nextC);
             }
-
-//            // 위쪽 집 검사
-//            if(preHome.r > 0){
-//                if(map[preHome.r-1][preHome.c]==1 && !visited[preHome.r-1][preHome.c]){
-//                    homeQueue.add(new Point(preHome.r-1, preHome.c));
-//                    visited[preHome.r-1][preHome.c] = true;
-//                }
-//            }
-//
-//            // 아래쪽 집 검사
-//            if(preHome.r < map.length-1){
-//                if(map[preHome.r+1][preHome.c]==1 && !visited[preHome.r+1][preHome.c]){
-//                    homeQueue.add(new Point(preHome.r+1, preHome.c));
-//                    visited[preHome.r+1][preHome.c] = true;
-//                }
-//            }
-//
-//            // 왼쪽 집 검사
-//            if(preHome.c > 0){
-//                if(map[preHome.r][preHome.c-1]==1 && !visited[preHome.r][preHome.c-1]){
-//                    homeQueue.add(new Point(preHome.r, preHome.c-1));
-//                    visited[preHome.r][preHome.c-1] = true;
-//                }
-//            }
-//
-//            // 오른쪽 집 검사
-//            if(preHome.c < map.length-1){
-//                if(map[preHome.r][preHome.c+1]==1 && !visited[preHome.r][preHome.c+1]){
-//                    homeQueue.add(new Point(preHome.r, preHome.c+1));
-//                    visited[preHome.r][preHome.c+1] = true;
-//                }
-//            }
         }
-
-        return count;
     }
 
 }
