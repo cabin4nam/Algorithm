@@ -1,26 +1,21 @@
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.util.*;
+import java.io.*;
 
-public class Main {
-    private static class Point{
-        int p;
-        int time;
-
-        public Point(int p, int time){
-            this.p = p;
-            this.time = time;
-        }
-    }
+class Main {
     private static int MAX = 100000;
+    private static int N, K;
+    private static int[] time;
     private static int minTime = Integer.MAX_VALUE;
     private static int totalCnt = 0;
+
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(br.readLine());
+        StringBuilder sb = new StringBuilder();
+        StringTokenizer st;
 
-        int N = Integer.parseInt(st.nextToken()); // 수빈이
-        int K = Integer.parseInt(st.nextToken()); // 동생
+        st = new StringTokenizer(br.readLine());
+        N = Integer.parseInt(st.nextToken());
+        K = Integer.parseInt(st.nextToken());
 
         if(N >= K){
             System.out.println(N-K);
@@ -32,40 +27,44 @@ public class Main {
 
         System.out.println(minTime);
         System.out.println(totalCnt);
+
     }
 
     private static void bfs(int start, int goal){
-        Queue<Point> q = new LinkedList<>();
-        boolean[] visited = new boolean[MAX+1];
-        q.offer(new Point(start, 0));
-        visited[start] = true;
+        Queue<Integer> q = new LinkedList<>();
+        time = new int[MAX+1];
+        Arrays.fill(time, -1);
+
+        q.offer(start);
+        time[start] = 0;
 
         while(!q.isEmpty()){
-            Point p = q.poll();
-            visited[p.p] = true;
+            int now = q.poll();
 
-            if(p.time > minTime) continue;
-
-            if(p.p == goal){
-                if(minTime > p.time){
-                    minTime = Math.min(minTime, p.time);
-                    totalCnt = 0;
+            if(now == goal){
+                if(time[now] == minTime) totalCnt ++;
+                else if(time[now] < minTime){
+                    minTime = time[now];
+                    totalCnt =1;
                 }
-                if(minTime == p.time)
-                    totalCnt ++;
-
+                continue;
             }
 
-            // 왼쪽으로 한칸 이동
-            if(p.p-1 >= 0 && !visited[p.p-1]) q.offer(new Point(p.p-1, p.time + 1));
+            for(int i=0; i<3; i++){
+                int next = 0;
 
-            // 오른쪽으로 한칸 이동
-            if(p.p+1 <= MAX && !visited[p.p+1]) q.offer(new Point(p.p+1, p.time + 1));
+                if(i==0) next = now-1;
+                else if(i==1) next = now+1;
+                else next = now*2;
 
-            // 순간이동
-            if(p.p*2 <= MAX && !visited[p.p*2]) q.offer(new Point(p.p*2, p.time + 1));
+                if(next < 0 || next > MAX) continue;
 
+                if(time[next] == -1 || (time[next]!=-1 && time[next] >= time[now]+1)){
+                    q.add(next);
+                    time[next] = time[now]+1;
+                }
+
+            }
         }
-
     }
 }
