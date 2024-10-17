@@ -24,9 +24,9 @@ public class Main {
         }
 
 
-        for(int j=0; j<N; j++){
-            for(int i=1; i<=N; i++){
-                countSum(i, j, 1, nums[j]);
+        for(int start=0; start<N; start++){
+            for(int count=1; count<=N; count++){
+                countSum(count, start, 1, nums[start]);
             }
         }
 
