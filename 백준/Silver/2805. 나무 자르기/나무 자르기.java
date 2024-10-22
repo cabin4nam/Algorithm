@@ -20,20 +20,11 @@ public class Main{
             high = Math.max(high, trees[i]);
         }
 
-        // 이진탐색을 사용하기 위해 trees 정렬
-//        Arrays.sort(trees); // O(N^2)
-
-
-
         int answer = 0;
         while(low <= high){ // O(logN)
             mid = (low+high)/2;
 
             long tree = calcLength(trees, mid); // O(N)
-//            if(tree == M){
-//                System.out.println(mid);
-//                return;
-//            }
             if(tree < M) high = mid-1;
             else{
                 low = mid+1;
