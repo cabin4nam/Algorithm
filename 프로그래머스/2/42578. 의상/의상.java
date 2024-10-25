@@ -4,20 +4,21 @@ class Solution {
     public int solution(String[][] clothes) {
         int answer = 1;
         
-        // 조합을 정확히 어떤 것을 입는지 트래킹해야 하면 ? 완전탐색
-        // 조합의 개수를 구할 때 ? 단순 계산
+        HashMap<String, ArrayList<String>> map = new HashMap<>();
         
-        Map<String, Integer> map = new HashMap<>();
         for(int i=0; i<clothes.length; i++){
-            map.put(clothes[i][1], map.getOrDefault(clothes[i][1], 0) + 1);
+            String c = clothes[i][0];
+            String category = clothes[i][1];
+            
+            if(map.get(category) == null) map.put(category, new ArrayList<>());
+            map.get(category).add(c);
         }
         
+        // 각 의상 별로 종류의 개수 + 안쓰는 것의 개수 합 - 1(아무것도 안입을 수는 없음)
         for(String key : map.keySet()){
-            answer *= map.get(key)+1;
+            answer*= map.get(key).size()+1;
         }
         
-        answer -= 1;
-        
-        return answer;
+        return answer-1;
     }
 }
