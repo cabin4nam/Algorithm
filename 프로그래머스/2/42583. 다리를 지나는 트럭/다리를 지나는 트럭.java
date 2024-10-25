@@ -2,42 +2,39 @@ import java.util.*;
 
 class Solution {
     public int solution(int bridge_length, int weight, int[] truck_weights) {
-        int answer = 0;
-        
-        Queue<Integer> bridge = new LinkedList<>();
-        int bridgeWeight = 0;
-        for(int i=0; i<truck_weights.length; i++){
-            int truck = truck_weights[i];
-            
-            while(true){
-                if(bridge.isEmpty()){ // 다리에 아무것도 없는 경우 : 트럭 올릴 수 있음
-                    bridge.offer(truck);
-                    bridgeWeight += truck;
-                    answer ++;
-                    break;
-                }
-                else if(bridge.size() == bridge_length){ // 다리가 꽉 찬 경우 : 트럭 하나 out.
-                    bridgeWeight -= bridge.poll();
-                }
-                else{ 
-                    if(bridgeWeight + truck <= weight){ // 다리에 현재 트럭을 올려도 무게 초과가 되지 않는 경우 : 트럭 올려주기
-                        bridge.offer(truck);
-                        bridgeWeight += truck;
-                        answer ++;
-                        break;
-                    }
-                    else {
-                        bridge.offer(0); // 다리 위의 무게 초과로 트럭 올릴 수 없음 : 빈 값을 넣어서 다리 채워주기
-                        answer++;
-                    }
-                    
-                }
-            }
-            
-        }
-        
-        answer += bridge_length;
-        
-        return answer;
+        Queue<Integer> queue = new LinkedList<>();
+		int sum = 0; // 현재 다리 위의 하중
+		int time = 0;  // 시간
+
+		for(int i = 0; i < truck_weights.length; i++) { // 향상된 for문을 쓰는게 좋을 것 
+			int truck = truck_weights[i];
+
+			while(true) {
+				// 큐에 아무것도 없는 경우 = 어떠한 트럭도 다리위에 없음 
+				if(queue.isEmpty()) { 
+					queue.add(truck);
+					sum += truck;
+					time++; // 다리에 오를 때만 시간 추가 
+					break;
+				} else if(queue.size() == bridge_length) { // 큐에 다리 길이만큼 트럭이 다 찬 경우 
+					sum -= queue.poll();
+				} else  { // 다리 길이만큼 큐가 차지않았음
+					// weight 값을 넘지 않는 선에서 새로운 트럭을 다리에 올려줌 
+					if(sum + truck <= weight) {
+						queue.add(truck);
+						sum += truck;
+						time++;
+						break;
+					} else { 
+						// 넘는다면 0을 넣어 이미 큐에 있는 트럭이 다리를 건너게 만듬 
+						queue.add(0);
+						time++;
+					}
+				}
+			}
+		}
+
+        // 마지막 트럭에서 반복문이 끝나는데, 마지막 역시 다리 길이만큼 지나가야하기에 + 다리 길이 
+		return time + bridge_length; 
     }
 }
