@@ -1,47 +1,44 @@
-import java.util.*;
+import java.util.HashSet;
 class Solution {
-    static Set<Integer> madeNumbers;
-    static boolean[] visited;
-    static int answer = 0;
+    private HashSet<Integer> nums;
+    private static boolean[] visited;
     public int solution(String numbers) {
+        int answer = 0;
         
-        madeNumbers = new HashSet<>();
+        nums = new HashSet<>();
         visited = new boolean[numbers.length()];
-        
-        for(int i=0; i<numbers.length(); i++){
-            visited[i] = true;
-            dfs(numbers, i, "");
-            visited[i] = false;
+        for(int i=1; i<=numbers.length(); i++){
+            findNums(i, 0, "", numbers);
         }
         
-        for(int n : madeNumbers){
-            if(isPrime(n)) answer ++;
+        for(int n : nums){
+            if(isPrime(n)) answer++;
         }
         
         return answer;
     }
     
-    private void dfs(String numbers, int index, String number){
-        String addedNum = number + numbers.substring(index, index+1);
-        
-        madeNumbers.add(Integer.parseInt(addedNum));
+    public void findNums(int count, int depth, String result, String numbers){
+        if(count == depth){
+            nums.add(Integer.parseInt(result));
+            return;
+        }
         
         for(int i=0; i<numbers.length(); i++){
-            if(visited[i]) continue;
-            
-            visited[i] = true;
-            dfs(numbers, i, addedNum);
-            visited[i] = false;
+            if(!visited[i]){
+                visited[i] = true;
+                findNums(count, depth+1, result+String.valueOf(numbers.charAt(i)), numbers);
+                visited[i] = false;
+            }
         }
     }
     
-    private boolean isPrime(int num){
-        if(num<=1) return false;
-        if(num==2) return true;
+    public boolean isPrime(int n){
+        if(n == 0 || n==1) return false;
         
-        for(int i=2; i*i<=num; i++){
-            if(num%i==0) return false;
-        }
+        for(int i=2; i*i<=n; i++)
+            if(n%i == 0) return false;
+        
         return true;
     }
 }
