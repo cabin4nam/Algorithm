@@ -1,30 +1,26 @@
-import java.util.*;
-import java.lang.Math;
 class Solution {
     public int[] solution(int brown, int yellow) {
         int[] answer = new int[2];
         
-        // 사각형으로 만들 수 있는 사각형 .. -> h 기준
-        getSquare(yellow).forEach(s -> {
-            if(getBorderLength(s, yellow/s) == brown) {
-                answer[0] = yellow/s + 2;
-                answer[1] = s + 2;
+        // 10 - (w*2) + 2*(h-2) = 2w + 2h - 4 = 2(w+h) - 4
+        // w+h = 7
+        // 7 = 3,4 2,5 1,6
+        
+        int sum = 0;
+        // w+h가 될 수 있는 수
+        sum = (brown+4) / 2;
+        
+        for(int i=2; i<=sum/2; i++){
+            int h = i;
+            int w = sum-i;
+            
+            if(w*h - brown == yellow){
+                answer[0] = w;
+                answer[1] = h;
+                break;
             }
-        });
+        }
         
         return answer;
-    }
-    
-    public ArrayList<Integer> getSquare(int size){
-        ArrayList<Integer> squareSize = new ArrayList<Integer>();
-        
-        for(int i=1; i<=Math.sqrt(size); i++){
-            if(size%i == 0) squareSize.add(i);
-        }
-        return squareSize;
-    }
-    
-    public int getBorderLength(int h, int w){
-        return ((h+w)*2) + 4;
     }
 }
