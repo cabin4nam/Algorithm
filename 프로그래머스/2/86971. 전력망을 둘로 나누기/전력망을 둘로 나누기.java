@@ -1,51 +1,63 @@
 import java.util.*;
 class Solution {
-    /**
-    *   1. 입력받은 wires로 그래프를 인접 리스트로 표현
-        2. wires를 for문으로 순회하면서 각 연결을 끊기.
-            1. dfs를 진행 → 끊으려는 wires가 나오면 해당 연결이 없는 것 처럼 생략
-            2. 하나의 개수가 나오면 나머지 개수도 알 수 있음. 
-            3. 차이가 적은 것을 골라 max에 업데이트
-        3. max 출력
-    **/
-    static ArrayList<ArrayList<Integer>> wireList;
-    static int depth = 0;
+    private static int[][] map;
     public int solution(int n, int[][] wires) {
-        int answer = -1;
+        int answer = Integer.MAX_VALUE;
         
-        // 그래프를 담을 인접 리스트 초기화
-        wireList = new ArrayList<>();
-        for(int i=0; i<=n; i++)
-            wireList.add(i, new ArrayList<>());
-        
-        // 그래프를 인접 리스트에 표현
-        for(int i=0; i<wires.length; i++){
-            wireList.get(wires[i][0]).add(wires[i][1]);
-            wireList.get(wires[i][1]).add(wires[i][0]);
+        // 인접 행렬을 활용하여 전선 표현
+        map = new int[n+1][n+1];
+        for(int[] wire : wires){
+            int w1 = wire[0];
+            int w2 = wire[1];
+            
+            map[w1][w2] = 1;
+            map[w2][w1] = 1;
         }
         
-        for(int i=0; i<wires.length; i++){
-            boolean[] visited = new boolean[n+1];
-            depth = 1;
-            visited[1] = true;
-            dfs(wires, i, 1, visited); // dfs(wire index, start, visited)
-            if(answer == -1) answer = Math.abs(depth- (n-depth));
-            else answer = Math.min(answer, Math.abs(depth - (n-depth)));
+        // 전선을 하나씩 끊어보면서 송신탑 개수 차이가 적은 것 찾기
+        for(int[] wire : wires){
+            int w1 = wire[0];
+            int w2 = wire[1];
+            
+            // 전선 자르기
+            map[w1][w2] = 0;
+            map[w2][w1] = 0;
+            
+            int c1 = count(w1, n);
+            int c2 = count(w2, n);
+            
+            answer = Math.min(answer, Math.abs(c1-c2));
+            
+            // 전선 원상복구
+            map[w1][w2] = 1;
+            map[w2][w1] = 1;
+            
             
         }
         
         return answer;
     }
     
-    public void dfs(int[][] wires, int index, int start, boolean[] visited){
-        // wires[index][0] 과 wires[index][1]을 끊은 상태에서 dfs
-        for(int w : wireList.get(start)){
-            if(visited[w]) continue;
-            if((start==wires[index][1] && w==wires[index][0])|| (start==wires[index][0] && w==wires[index][1])) continue;
+    private static int count(int start, int n){
+        int count = 0;
+        Queue<Integer> q = new LinkedList<>();
+        boolean[] visited = new boolean[n+1];
+        
+        q.offer(start);
+        visited[start] = true;
+        
+        while(!q.isEmpty()){
+            int now = q.poll();
             
-            visited[w] = true;
-            depth++;
-            dfs(wires, index, w, visited);
+            for(int i=1; i<=n; i++){
+                if(map[now][i]==1 && !visited[i]){
+                    q.offer(i);
+                    visited[i] = true;
+                    count++;
+                }
+            }
         }
+        
+        return count;
     }
 }
