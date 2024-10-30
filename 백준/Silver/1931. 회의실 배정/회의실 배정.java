@@ -9,14 +9,7 @@ public class Main{
             this.end = end;
         }
     }
-    private static class Room{
-        int count;
-        int end;
-        public Room(int count , int end){
-            this.count = count;
-            this.end = end;
-        }
-    }
+    
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
