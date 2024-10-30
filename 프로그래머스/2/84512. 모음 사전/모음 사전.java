@@ -1,36 +1,28 @@
 class Solution {
-    static boolean[] visited;
-    static int answer = 0;
-    static String[] eng = {"A", "E", "I", "O", "U"};
-    static boolean isFound = false;
+    private static String[] chars = {"A", "E", "I", "O", "U"};
+    private static int answer;
+    private static boolean isMatched = false;
     public int solution(String word) {
+        answer = 0;
         
-        visited = new boolean[word.length()];
-        
-        for(int i=0; i<5; i++){
-            if(isFound) break;
-            
-            DFS(word, eng[i]);
-        }
+        makeWord(word, "");
         
         return answer;
     }
     
-    private void DFS(String word, String str){
-        if(str.length() > 5) return;
-        
-        answer++;
-        if(str.equals(word)){
-            isFound = true;
+    public void makeWord(String target, String now){
+        if(isMatched) return;
+        if(now.length() > 5) return;
+        if(now.equals(target)){
+            isMatched = true;
             return;
-        } 
-         
-        for(int i=0; i<5; i++){
-            if(isFound) break;
-            
-            DFS(word, str+eng[i]);
-            
         }
+        
+        answer ++;
+        
+        for(int i=0; i<chars.length; i++){
+            makeWord(target, now+chars[i]);
+        }
+        
     }
-    
 }
