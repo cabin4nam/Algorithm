@@ -1,52 +1,70 @@
 import java.util.*;
 class Solution {
+    private static ArrayList<Integer>[] graph;
     private static boolean[] visited;
-    private static List<Integer>[] graph;
-    private static int answer = 0;
-    private static Map<Integer, Integer> count;
+    private static int[] distance;
+    private static int answer;
+    private static class Node{
+        int node;
+        int depth;
+        public Node(int node, int depth){
+            this.node = node;
+            this.depth = depth;
+        }
+    }
     public int solution(int n, int[][] edge) {
+        answer = 0;
+        
+        // 1번 노드로부터 가장 멀리 떨어진 노드가 몇 개인지 구하기
+        distance = new int[n+1];
+        Arrays.fill(distance, Integer.MAX_VALUE);
+        distance[1] = 0;
+        
+        // 그래프 표현
+        graph = new ArrayList[n+1];
         visited = new boolean[n+1];
-        graph = new List[n+1];
-        count = new HashMap<>();
-        for(int i=1; i<=n; i++){
-            graph[i] = new ArrayList<>();
-        }
-        for(int i=0; i<edge.length; i++){
-            int from = edge[i][0];
-            int to = edge[i][1];
+        for(int[] e : edge){
+            int n1 = e[0];
+            int n2 = e[1];
             
-            graph[from].add(to);
-            graph[to].add(from);
+            if(graph[n1] == null) graph[n1] = new ArrayList<Integer>();
+            if(graph[n2] == null) graph[n2] = new ArrayList<Integer>();
+            graph[n1].add(n2);
+            graph[n2].add(n1);
         }
         
-        findMax(1);
+        // 1-> 2,3
+        // 2-> 1,3,4,5
+        // 3-> 1,4,6
+        // 4-> 2,3
+        // 5-> 2
+        // 6-> 3
         
-        int max = -1;
-        for(int key : count.keySet()){
-            if(key > max) max = key;
-        }
-        answer = count.get(max);
-        
+        bfs(1);      
         return answer;
     }
     
-    public void findMax(int start){
-        Queue<int[]> q = new LinkedList<>();
-        q.offer(new int[]{start, 0});
-        visited[start] = true;
-        count.put(0, count.getOrDefault(0, 0) +1);
+    private static void bfs(int node){
+        Queue<Node> q = new LinkedList<>();
+        q.offer(new Node(node, 1));
+        visited[node] = true;
         
+        int maxDepth = 0;
         while(!q.isEmpty()){
-            int[] curr = q.poll();
-
-            for(int next : graph[curr[0]]){
+            Node now = q.poll();
+            
+            if(maxDepth == now.depth) answer++; // 최대 길이 노드라면 answer++;
+			else if (maxDepth < now.depth) { // 더 긴 거리에 노드가 있다면 answer = 1, MaxDepth 갱신
+				maxDepth = now.depth;
+				answer = 1;
+			}
+            
+            for(int next : graph[now.node]){
                 if(!visited[next]){
-                    q.offer(new int[]{next, curr[1]+1});
+                    q.offer(new Node(next, now.depth+1));
                     visited[next] = true;
-                    count.put(curr[1]+1, count.getOrDefault(curr[1]+1, 0) +1);
                 }
             }
         }
-        
     }
 }
