@@ -2,37 +2,31 @@ import java.util.Arrays;
 
 class Solution {
     public long solution(int n, int[] times) {
-        long answer = Long.MAX_VALUE;
+        long answer = 0;
         
         Arrays.sort(times);
         
-        long low = 0; // 최소 시간
-        long high = times[times.length-1] * (long)n; // 최대 시간 : 가장 오래 걸리는 심사관이 모든 사람을 심사할 경우
-        long mid;
+        // 이분 탐색
+        long left = 1; // 최소시간
+        long right = times[times.length-1] * (long)n; // 최대시간
+        long mid = 0;
         
-        while(low <= high){
-            mid = (low+high) / 2;
+        while(left <= right){
+            mid = (left+right)/2;
             
-            // mid 시간동안 심사할 수 있는 최대 인원이 n명일 때 정답
-            long count = countMax(mid, times);
-            // if(n==count) return mid;
-            if(n<=count){
-                high = mid-1; 
+            // mid 시간동안 입국심사관이 심사할 수 있는 사람의 수
+            long count = 0;
+            for(int t : times) count += mid/t;
+            
+            if(count >= n){ // n명보다 더 많이 심사할 수 있으면 -> 더 짧은 시간으로 조정
                 answer = mid;
-            }  
-            else low = mid+1;
+                right = mid-1;
+            }
+            else { // n명보다 적은 사람을 심사할 수 있으면 -> 시간 늘리기
+                left = mid+1;
+            }
         }
         
         return answer;
-    }
-    
-    private static long countMax(long time, int[] times){
-        long count = 0;
-        
-        for(int p : times){
-            count += time/p;
-        }
-        
-        return count;
     }
 }
