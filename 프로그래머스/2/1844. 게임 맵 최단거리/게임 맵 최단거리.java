@@ -1,73 +1,55 @@
-import java.lang.*; 
-import java.util.*;
+
+import java.util.Queue;
+import java.util.LinkedList;
 
 class Solution {
-    // 상하좌우로 움직이기 용이하도록 설정한 값
-    static int[] move_y = {-1, 1, 0, 0};
-    static int[] move_x = {0, 0, -1, 1};
-    
-    static boolean[][] visited;
-    static int minCost = Integer.MAX_VALUE;
-    static boolean canArrive = false;
+    private static class Point{
+        int r;
+        int c;
+        int depth;
+        public Point(int r, int c, int depth){
+            this.r = r;
+            this.c = c;
+            this.depth = depth;
+        }
+    }
+    private static int[][] move = {{-1,0}, {1,0}, {0,-1}, {0,1}};
+    private static int n; //세로
+    private static int m; // 가로
     public int solution(int[][] maps) {
         int answer = 0;
         
-        // 0,0 부터 n-1, m-1 까지
+        n = maps.length;
+        m = maps[0].length;
         
-        int n = maps.length;
-        int m = maps[0].length;
-        
-        visited = new boolean[n][m];
-        
-        bfs(maps, 0, 0);
-        
-        if(!canArrive) return -1;
-        
-        return minCost;
+        return bfs(maps, 0, 0);
     }
-
     
-    public void bfs(int[][] maps, int start_y, int start_x){
-        Queue<Node> q = new LinkedList<>();
-        
-        q.add(new Node(0,0,1));
-        visited[0][0] = true;
+    public int bfs(int[][] maps, int startR, int startC){
+        Queue<Point> q = new LinkedList<>();
+        boolean[][] visited = new boolean[n][m];
+        q.offer(new Point(startR, startC, 1));
+        visited[startR][startC] = true;
         
         while(!q.isEmpty()){
-            Node currentNode = q.poll();
+            Point p = q.poll();
             
-            if(currentNode.y == maps.length-1 && currentNode.x == maps[0].length-1){
-                canArrive = true;
-                minCost = currentNode.count;
-                return;
-            }
+            if(p.r == n-1 && p.c == m-1) return p.depth;
             
             for(int i=0; i<4; i++){
-                int next_y = currentNode.y + move_y[i];
-                int next_x = currentNode.x + move_x[i];
+                int nextR = p.r + move[i][0];
+                int nextC = p.c + move[i][1];
                 
-                if(canMove(next_y, next_x, maps)){
-                    visited[next_y][next_x] = true;
-                    q.add(new Node(next_y, next_x, currentNode.count+1));
+                if(nextR < 0 || nextC < 0 || nextR >= n || nextC >= m) continue;
+                if(visited[nextR][nextC]) continue;
+                
+                if(maps[nextR][nextC] == 1){
+                    q.offer(new Point(nextR, nextC, p.depth+1));
+                    visited[nextR][nextC] = true;
                 }
             }
         }
-    }
-    
-    public boolean canMove(int row, int col, int[][] maps) {
-        return row >= 0 && row < visited.length && col >= 0 && col < visited[0].length
-                    && !visited[row][col] && maps[row][col] != 0;
-    }
-    
-     class Node {
-        int y;
-        int x;
-        int count;
         
-        public Node(int y, int x, int count) {
-            this.y = y;
-            this.x = x;
-            this.count = count;
-        }
-    }
+        return -1;
+    } 
 }
