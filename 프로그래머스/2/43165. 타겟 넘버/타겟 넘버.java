@@ -1,19 +1,21 @@
 class Solution {
-    private static int answer = 0;
+    private static int answer;
     public int solution(int[] numbers, int target) {
+        answer = 0;
         
-        dfs(numbers, 0, 0, target);
+        makeNum(numbers, target, 0, 0);
         
         return answer;
     }
     
-    public void dfs(int[] numbers, int idx, int sum, int target){
-        if(idx >= numbers.length){
-            if(sum == target) answer++;
+    private static void makeNum(int[] numbers, int target, int result, int depth){
+        if(depth == numbers.length){
+            if(target == result) answer ++;
             return;
         }
         
-        dfs(numbers, idx+1, sum+numbers[idx], target);
-        dfs(numbers, idx+1, sum-numbers[idx], target);
+        makeNum(numbers, target, result+(numbers[depth]*(-1)), depth+1);
+        makeNum(numbers, target, result+(numbers[depth]), depth+1);
+        
     }
 }
