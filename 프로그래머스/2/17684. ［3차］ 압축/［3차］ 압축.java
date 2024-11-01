@@ -1,44 +1,4 @@
-// import java.util.*;
 
-// class Solution {
-    
-    
-//     public List<Integer> solution(String msg) {
-//         List<Integer> answer = new ArrayList<>();
-        
-//         List<String> index = new ArrayList<>();
-//         index.add(" ");
-//         for(int i = 0; i < 26; i++) {
-//             index.add(String.valueOf((char)('A' + i)));
-//         }
-        
-//         int lengh = 1;
-//         int start = 0;
-//         while(start < msg.length()){
-//             if(start+1 >= msg.length()){
-//                 answer.add(index.indexOf(msg.substring(start, start+1)));
-//                 break;
-//             }
-//             String curStr = String.valueOf(msg.substring(start, start+1));
-            
-//             for(int i=1; i<=msg.length(); i++){
-//                 String nextStr = curStr + String.valueOf(msg.substring(start+1, start+2));
-                
-//                 if(!index.contains(nextStr)){
-//                     answer.add(index.indexOf(curStr));
-//                     index.add(nextStr);
-//                     break;
-//                 }
-                
-//                 curStr = nextStr;
-//             }
-            
-//             start += curStr.length();
-//         }
-        
-//         return answer;
-//     }
-// }
 
 import java.util.*;
 
