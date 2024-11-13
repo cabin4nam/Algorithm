@@ -1,25 +1,28 @@
 class Solution {
-    private static String[] strs = {"A", "E", "I", "O", "U"};
     private static int answer;
+    private static String[] alpha = {"A", "E", "I", "O", "U"};
     private static boolean hasFound = false;
     public int solution(String word) {
         answer = 0;
         
-        makeWord(0, "", word);
+        for(String a : alpha){
+            findWord(a, word);
+        }
         
         return answer;
     }
     
-    private void makeWord(int depth, String result, String target){
-        if(depth == 6 || hasFound) return;
-        
-        if(result.equals(target)){
+    private static void findWord(String word, String target){
+        if(word.length() > 5 || hasFound) return;
+    
+        answer++;
+        if(word.equals(target)){
             hasFound = true;
             return;
         }
-        answer++;
-        for(int i=0; i<strs.length; i++){
-            makeWord(depth+1, result+strs[i], target);
+        
+        for(String s : alpha){
+            findWord(word+s, target);
         }
     }
 }
