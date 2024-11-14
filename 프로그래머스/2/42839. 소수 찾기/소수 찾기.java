@@ -1,44 +1,52 @@
+import java.util.ArrayList;
 import java.util.HashSet;
 class Solution {
-    private HashSet<Integer> nums;
+    private static char[] arr;
     private static boolean[] visited;
+    private static HashSet<Integer> set;
+    private static int answer;
     public int solution(String numbers) {
-        int answer = 0;
+        answer = 0;
         
-        nums = new HashSet<>();
+        set = new HashSet<>();
         visited = new boolean[numbers.length()];
-        for(int i=1; i<=numbers.length(); i++){
-            findNums(i, 0, "", numbers);
+        arr = numbers.toCharArray();
+        
+        for(int i=0; i<arr.length; i++){
+            visited[i] = true;
+            findNum(String.valueOf(arr[i]), 0);
+            visited[i] = false;
         }
         
-        for(int n : nums){
+        for(int n : set){
             if(isPrime(n)) answer++;
         }
         
         return answer;
     }
     
-    public void findNums(int count, int depth, String result, String numbers){
-        if(count == depth){
-            nums.add(Integer.parseInt(result));
-            return;
-        }
+    private static void findNum(String result, int depth){
+        if(depth >= arr.length) return;
         
-        for(int i=0; i<numbers.length(); i++){
+        set.add(Integer.parseInt(result));
+        
+        for(int i=0; i<arr.length; i++){
             if(!visited[i]){
                 visited[i] = true;
-                findNums(count, depth+1, result+String.valueOf(numbers.charAt(i)), numbers);
+                findNum(result+String.valueOf(arr[i]), depth+1);
                 visited[i] = false;
             }
         }
     }
     
-    public boolean isPrime(int n){
-        if(n == 0 || n==1) return false;
+    private static boolean isPrime(int n){
+        if(n<=1) return false;
         
-        for(int i=2; i*i<=n; i++)
-            if(n%i == 0) return false;
+        for(int i=2; i*i<=n; i++){
+            if(n%i==0) return false;
+        }
         
         return true;
     }
+    
 }
