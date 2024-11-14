@@ -1,24 +1,28 @@
 import java.util.*;
+
 class Solution {
-    private static ArrayList<String> list;
-    private static int n;
-    private static boolean[] visited;
     public String solution(int[] numbers) {
         String answer = "";
         
-        String[] strs = new String[numbers.length];
-        for(int i=0; i<numbers.length; i++) strs[i] = String.valueOf(numbers[i]);
+        String[] arr = Arrays.stream(numbers)
+            .mapToObj(String::valueOf)
+            .sorted((s1, s2) -> {
+               int original = Integer.parseInt(s1+s2);
+                int reverse = Integer.parseInt(s2+s1);
+                return reverse - original;
+            })
+            .toArray(String[]::new);
         
-        Arrays.sort(strs, (n1, n2) -> (n2+n1).compareTo(n1+n2));
-        
-        if(strs[0].equals("0")) return "0";
+         if (arr[0].equals("0")) {
+            return "0";
+        }
         
         StringBuilder sb = new StringBuilder();
-        for(String s : strs) sb.append(s);
-        
+        for(String s : arr){
+            sb.append(s);  
+        }
         answer = sb.toString();
         
         return answer;
     }
-    
 }
