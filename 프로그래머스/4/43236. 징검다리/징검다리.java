@@ -1,48 +1,47 @@
-import java.util.*;
+import java.util.Arrays;
 class Solution {
     public int solution(int distance, int[] rocks, int n) {
         int answer = 0;
         
         Arrays.sort(rocks);
         
-        int left = 1;
+        int left = 0;
         int right = distance;
         int mid = 0;
-        
         while(left <= right){
             mid = (left+right)/2;
             
-            if(removeRockCnt(rocks, mid, distance) <= n){
-                answer = mid;
-                left = mid+1;
+            int count = removeRock(rocks, mid, distance);
+        
+            if(count > n){
+                right = mid-1;
+                
             }
             else{
-                right = mid-1;
+                answer = mid;
+                left = mid+1;
+                
             }
         }
+        
         return answer;
     }
     
-    private static int removeRockCnt(int[] rocks, int mid, int distance){
-        // mid가 바위(지점) 간 최소 거리가 되어야 함
-        // 그렇게 되도록 하기 위해 제거해야 할 바위의 개수 구하기
-        
+    private static int removeRock(int[] rocks, int mid, int distance){
+        int count = 0; 
         int start = 0;
-        int end = distance;
-        
-        int removeCnt = 0;
-        
+        // mid가 최솟값이어야 함.
         for(int i=0; i<rocks.length; i++){
-            if(rocks[i]-start < mid){ // 제거
-                removeCnt ++;
+            if(rocks[i] - start < mid){
+                count ++;
             }
             else{
                 start = rocks[i];
             }
         }
         
-        if(end-start < mid) removeCnt++;
+        if(distance - start < mid) count++;
         
-        return removeCnt;
+        return count;
     }
 }
