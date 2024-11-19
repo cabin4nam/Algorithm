@@ -1,40 +1,54 @@
-import java.util.*;
+import java.util.Stack;
+
 class Solution {
+    private static StringBuilder sb;
     public int solution(String s) {
         int answer = 0;
-        
-        Queue<Character> q = new LinkedList<>();
-        for(int i =0; i<s.length(); i++) q.offer(s.charAt(i));
+        int openCnt = 0;
+        int closeCnt = 0;
         for(int i=0; i<s.length(); i++){
-            // 올바른지 확인 -> 올바르면 answer에 더해주기
-            ArrayList<Character> list = new ArrayList<>();
-            for(Character c : q){
-                list.add(c);
-            }   
-            if(isCorrect(list)) answer++;
-            
-            // 회전
-            q.offer(q.poll());
+            if(s.charAt(i)=='(' || s.charAt(i)=='{' || s.charAt(i)=='[') openCnt ++;
+            else closeCnt++;
         }
+        
+        if(openCnt != closeCnt) return 0;
+        
+        sb = new StringBuilder(s);
+        for(int i=0; i<s.length(); i++){
+            // 올바른지 확인
+            if(isRight()) answer++;
+                
+            // 회전
+            char str = sb.charAt(0);
+            sb.deleteCharAt(0);
+            sb.append(String.valueOf(str));
+            
+        }
+        
         return answer;
     }
     
-    private static boolean isCorrect(ArrayList<Character> list){
+    private static boolean isRight(){
         Stack<Character> stack = new Stack<>();
         
-        for(Character c : list){
-            if(c=='[' || c=='{' || c=='(') stack.push(c);
+        for(int i=0; i<sb.length(); i++){
+            if(sb.charAt(i)=='(' || sb.charAt(i)=='{' || sb.charAt(i)=='[') stack.push(sb.charAt(i));
             else {
                 if(stack.isEmpty()) return false;
                 
-                Character peek = stack.peek();
-                if(c==']' && peek=='[') stack.pop();
-                else if(c=='}' && peek=='{') stack.pop();
-                else if(c==')' && peek=='(') stack.pop();
-                else return false;
+                char c = stack.pop();
+                
+                switch(sb.charAt(i)){
+                    case ')' : if(c!='(') return false; break;
+                    case '}' : if(c!='{') return false; break;
+                    case ']' : if(c!='[') return false; break;
+                    default: break;
+                }
             }
         }
+        
         if(!stack.isEmpty()) return false;
+        
         return true;
     }
 }
